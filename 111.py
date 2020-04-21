@@ -49,7 +49,7 @@ while flag:
     res = ''
     while flag_internal:
         res = input("Хотите начать сначала? (y/n)")
-        if input_errors >= 2:
+        if input_errors >= 3:
             res = 'n'
             break
         if not (res.lower() == 'y' or res.lower() == 'n'):
