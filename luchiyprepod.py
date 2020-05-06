@@ -8,8 +8,10 @@ for line in config:
 	val = ""
 	try:
 		val = line.split()[1]
+		val += " " + line.split()[2]
 	except IndexError:
-		val = "key {" + key + "} has not a value"
+		if val == "":
+		 val = "key {" + key + "} has not a value"
 	dictionary.update({key : val})
 
 flag = True
