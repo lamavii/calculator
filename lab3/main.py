@@ -15,9 +15,12 @@ def main_menu():
 
     ans = -1
     while ans == -1:
-        ans = int(input("> "))
-        if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
-            ans = -1
+        try:
+            ans = int(input("> "))
+            if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
+                ans = -1
+        except ValueError:
+            pass
     print("\n")
     if ans == 1:
         gen_key()
@@ -36,9 +39,12 @@ def gen_key():
     
     ans = -1
     while ans == -1:
-        ans = int(input("> "))
-        if not(ans == 1 or ans == 2 or ans == 3):
-            ans = -1 
+        try:
+            ans = int(input("> "))
+            if not(ans == 1 or ans == 2 or ans == 3):
+                ans = -1 
+        except ValueError:
+            pass
     if ans == 1:
         gen_key_rep()
     elif ans == 2:
@@ -51,17 +57,19 @@ def gen_key_rep():
     print("Генерация ключа (замены)")
     crypt = Replacement()
     while True:
-        path = input("   Введите путь к алфавиту: ")
+        try:
+            path = input("   Введите путь к алфавиту: ")
 
-        if path.find(".alph") == -1:
-            print("   Некорректный путь.")
-            continue
-        else:
-            break
-
-    f_alph = open(path, "r")
-    alph = Alphabet(f_alph.read())
-    f_alph.close()
+            if path.find(".alph") == -1:
+                print("   Некорректный путь.")
+                continue
+            else:
+                f_alph = open(path, "r")
+                alph = Alphabet(f_alph.read())
+                f_alph.close()
+                break
+        except FileNotFoundError:
+            print("   Файл не найден")    
 
     key = crypt.GenerateKey(alph)
 
@@ -88,7 +96,10 @@ def gen_key_tra():
        k = input("   Введите размер блока перестановки: ")
        if k.isdigit():
            n = int(k)
-           break
+           if n > 0:
+               break
+           else:
+               print("   Некорректное значение.")
        else:
            print("   Некорректное значение.")   
 
@@ -116,7 +127,10 @@ def gen_key_gam():
        k = input("   Введите размер ключа: ")
        if k.isdigit():
            n = int(k)
-           break
+           if n > 0:
+               break
+           else:
+               print("   Некорректное значение.")
        else:
            print("   Некорректное значение.")   
 
@@ -142,9 +156,12 @@ def enc():
     print("   3) Гаммирование")
     ans = -1
     while ans == -1:
-        ans = int(input("> "))
-        if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
-            ans = -1
+        try:
+            ans = int(input("> "))
+            if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
+                ans = -1
+        except ValueError:
+            pass
     print("\n")
     if ans == 1:
         enc_file(0)
@@ -171,27 +188,35 @@ def enc_file(enc_type):
     txt = ""
     key = None
 
-    t_path = input("   Введите путь к файлу, который надо зашифровать: ")
-    f_txt = open(t_path, "r")
-    txt = f_txt.read()
-    f_txt.close()
+    while True:
+        try:
+            t_path = input("   Введите путь к файлу, который надо зашифровать: ")
+            f_txt = open(t_path, "r")
+            txt = f_txt.read()
+            f_txt.close()
+            break
+        except FileNotFoundError:
+            print("   Файл не найден")
 
     while True:
-        path = input("   Введите путь к файлу ключа: ")
-        if path.find(".key") == -1:
-           print("   Некорректный путь.")
-           continue
-        else:
-            try:
-                f_key = open(path, "r")
-                key = Key(f_key.read())
-                f_key.close()
-            except StringIsNotAKeyException:
-                print("   Некорректный файл ключа.")
-            if key.encode_type == enc_type:
-                break
+        try:
+            path = input("   Введите путь к файлу ключа: ")
+            if path.find(".key") == -1:
+               print("   Некорректный путь.")
+               continue
             else:
-                print("   Ключ не подходит для данного метода шифрования.")
+                try:
+                    f_key = open(path, "r")
+                    key = Key(f_key.read())
+                    f_key.close()
+                except StringIsNotAKeyException:
+                    print("   Некорректный файл ключа.")
+                if key.encode_type == enc_type:
+                    break
+                else:
+                    print("   Ключ не подходит для данного метода шифрования.")
+        except FileNotFoundError:
+            print("   Файл не найжен.")
 
     enc_txt = crypt.Encrypt(txt, key)
     print("   Текст зашифрован.")
@@ -210,9 +235,12 @@ def decr():
     print("   3) Гаммирование")
     ans = -1
     while ans == -1:
-        ans = int(input("> "))
-        if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
-            ans = -1
+        try:
+            ans = int(input("> "))
+            if not(ans == 1 or ans == 2 or ans == 3 or ans == 4):
+                ans = -1
+        except ValueError:
+            pass
     print("\n")
     if ans == 1:
         decr_file(0)
@@ -241,32 +269,37 @@ def decr_file(enc_type):
 
     t_path = ""
     while True:
-        t_path = input("   Введите путь к файлу с шифротекстом: ")
-        if t_path.find(".encrypt") == -1:
-            print("   Некорректный путь.")
-        else:
-            break
-
-    f_txt = open(t_path, "r")
-    txt = f_txt.read()
-    f_txt.close()
+        try:
+            t_path = input("   Введите путь к файлу с шифротекстом: ")
+            if t_path.find(".encrypt") == -1:
+                print("   Некорректный путь.")
+            else:
+                f_txt = open(t_path, "r")
+                txt = f_txt.read()
+                f_txt.close()
+                break  
+        except FileNotFoundError:
+            print("   Файл не найден.")
 
     while True:
-        path = input("   Введите путь к файлу ключа: ")
-        if path.find(".key") == -1:
-           print("   Некорректный путь.")
-           continue
-        else:
-            try:
-                f_key = open(path, "r")
-                key = Key(f_key.read())
-                f_key.close()
-            except StringIsNotAKeyException:
-                print("   Некорректный файл ключа.")
-            if key.encode_type == enc_type:
-                break
+        try:
+            path = input("   Введите путь к файлу ключа: ")
+            if path.find(".key") == -1:
+               print("   Некорректный путь.")
+               continue
             else:
-                print("   Ключ не подходит для данного метода шифрования.")
+                try:
+                    f_key = open(path, "r")
+                    key = Key(f_key.read())
+                    f_key.close()
+                except StringIsNotAKeyException:
+                    print("   Некорректный файл ключа.")
+                if key.encode_type == enc_type:
+                    break
+                else:
+                    print("   Ключ не подходит для данного метода шифрования.")
+        except FileNotFoundError:
+            print("   Файл не найден.")
 
     enc_txt = crypt.Decrypt(txt, key)
     print("   Текст расшифрован.")
